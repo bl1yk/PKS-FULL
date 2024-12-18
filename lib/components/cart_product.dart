@@ -3,6 +3,7 @@ import 'package:full_proj_pks/models/product.dart';
 import 'package:full_proj_pks/models/cart_manager.dart';
 import 'package:provider/provider.dart';
 import 'package:full_proj_pks/pages/product_page.dart';
+import 'package:full_proj_pks/api/api_service.dart';
 
 class CartProduct extends StatefulWidget {
   final Product product;
@@ -14,10 +15,12 @@ class CartProduct extends StatefulWidget {
 }
 
 class _CartProductState extends State<CartProduct> {
+  final ApiService _apiService = ApiService();
 
   @override
   Widget build(BuildContext context) {
     final cartManager = Provider.of<CartManager>(context);
+
     return GestureDetector(
       onTap: () => Navigator.push(
         context,

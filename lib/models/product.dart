@@ -6,11 +6,12 @@ class Product {
   final String productAbout;
   final String productListen;
   int quantity;
+  bool inCart;
 
   Product({required this.productId, required this.productTitle,
     required this.productImage,
     required this.productPrice, required this.productAbout,
-    required this.productListen, this.quantity = 0,
+    required this.productListen, this.quantity = 0, this.inCart = false,
   });
 
   Map<String, dynamic> toJson() {
@@ -22,6 +23,7 @@ class Product {
       'Description': productAbout,
       'Specifications': productListen,
       'Quantity': quantity,
+      'InCart': inCart,
     };
   }
 
@@ -33,7 +35,8 @@ class Product {
       productPrice: json['Price'],
       productAbout: json['Description'],
       productListen: json['Listen'],
-      quantity: json['Quantity'],
+      quantity: json['Quantity'] ?? 0,
+      inCart: json['InCart'] ?? false,
     );
   }
 }

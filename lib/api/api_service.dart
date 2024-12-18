@@ -72,12 +72,63 @@ class ApiService {
   // Удаление продукта
   Future<void> deleteProduct(int id) async {
     try {
-      final response = await _dio.delete('http://192.168.1.43:8080/products/delete/$id');
+      final response = await _dio.delete(
+          'http://192.168.1.43:8080/products/delete/$id');
       if (response.statusCode != 204) {
         throw Exception('Failed to delete product with id: $id');
       }
     } catch (e) {
       throw Exception('Error deleting product: $e');
+    }
+  }
+  // Обновление количества товара
+  Future<Product> updateProductQuantity(int productId, int quantity) async {
+    try {
+      final response = await _dio.put(
+        'http://192.168.1.43:8080/products/quantity/$productId',
+        data: {'quantity': quantity},
+      );
+      if (response.statusCode == 200) {
+        return Product.fromJson(response.data);
+      } else {
+        throw Exception('Failed to update product quantity');
+      }
+    } catch (e) {
+      throw Exception('Error updating product quantity: $e');
+    }
+  }
+
+  // Добавление/удаление товара из избранного
+  Future<Product> toggleFavorite(int productId) async {
+    try {
+      final response = await _dio.post(
+        'http://192.168.1.43:8080/products/favorite/$productId',
+        data: {'inCart': false},
+      );
+      if (response.statusCode == 200) {
+        return Product.fromJson(response.data);
+      } else {
+        throw Exception('Failed to toggle favorite');
+      }
+    } catch (e) {
+      throw Exception('Error toggling favorite: $e');
+    }
+  }
+
+  // Обновление флага InCart (добавление/удаление из корзины)
+  Future<Product> toggleCart(int productId) async {
+    try {
+      final response = await _dio.post(
+        'http://192.168.1.43:8080/products/cart/$productId',
+        data: {'inCart': false}, // Убедитесь, что сервер ожидает это поле
+      );
+      if (response.statusCode == 200) {
+        return Product.fromJson(response.data);
+      } else {
+        throw Exception('Failed to toggle cart');
+      }
+    } catch (e) {
+      throw Exception('Error toggling cart: $e');
     }
   }
 }
