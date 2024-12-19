@@ -103,7 +103,7 @@ class ApiService {
     try {
       final response = await _dio.post(
         'http://192.168.1.43:8080/products/favorite/$productId',
-        data: {'inCart': false},
+        data: {'is_favourite': false},
       );
       if (response.statusCode == 200) {
         return Product.fromJson(response.data);
@@ -118,9 +118,9 @@ class ApiService {
   // Обновление флага InCart (добавление/удаление из корзины)
   Future<Product> toggleCart(int productId) async {
     try {
-      final response = await _dio.post(
+      final response = await _dio.put(
         'http://192.168.1.43:8080/products/cart/$productId',
-        data: {'inCart': false}, // Убедитесь, что сервер ожидает это поле
+        data: {'in_cart': false}, // Убедитесь, что сервер ожидает это поле
       );
       if (response.statusCode == 200) {
         return Product.fromJson(response.data);

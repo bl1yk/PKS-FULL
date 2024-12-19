@@ -37,8 +37,8 @@ class _CartProductState extends State<CartProduct> {
                   borderRadius: BorderRadius.circular(16.0),
                   child: Image.network(
                     widget.product.productImage,
-                    height: 140, // Уменьшенная высота изображения
-                    width: 140, // Уменьшенная ширина изображения
+                    height: 140,
+                    width: 140,
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -55,7 +55,7 @@ class _CartProductState extends State<CartProduct> {
                         style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white, // Цвет текста цены
+                          color: Colors.white,
                         ),
                       ),
                     ],
@@ -80,31 +80,34 @@ class _CartProductState extends State<CartProduct> {
             child: Row(
               children: [
                 IconButton(
-                  icon: const Icon(Icons.remove, color: Colors.white), // Цвет иконки "-"
-                  onPressed: () {
-                    setState(() {
-                      if (widget.product.quantity > 1) {
+                  icon: const Icon(Icons.remove, color: Colors.white),
+                  onPressed: () async {
+                    if (widget.product.quantity > 1) {
+                      setState(() {
                         widget.product.quantity--;
-                      } else {
-                        cartManager.removeFromCart(widget.product, context);
-                        widget.product.quantity = 0;
-                      }
-                    });
+                      });
+                      // Обновляем quantity на сервере
+                      await _apiService.updateProductQuantity(widget.product.productId, widget.product.quantity);
+                    } else {
+                      cartManager.removeFromCart(widget.product, context);
+                    }
                   },
                 ),
                 Text(
                   "${widget.product.quantity}",
                   style: const TextStyle(
-                    color: Colors.white, // Цвет текста количества
+                    color: Colors.white,
                     fontSize: 18,
                   ),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.add, color: Colors.white), // Цвет иконки "+"
-                  onPressed: () {
+                  icon: const Icon(Icons.add, color: Colors.white),
+                  onPressed: () async {
                     setState(() {
                       widget.product.quantity++;
                     });
+                    // Обновляем quantity на сервере
+                    await _apiService.updateProductQuantity(widget.product.productId, widget.product.quantity);
                   },
                 ),
               ],
