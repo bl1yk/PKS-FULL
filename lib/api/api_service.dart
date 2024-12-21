@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:full_proj_pks/models/product.dart';
+import 'package:full_proj_pks/models/order.dart';
 
 class ApiService {
   final Dio _dio = Dio();
@@ -8,7 +9,7 @@ class ApiService {
   Future<List<Product>> getProducts({
     String searchQuery = "",
     double minPrice = 0,
-    double maxPrice = 30000,
+    double maxPrice = 10000,
     String sortBy = "",
     String sortOrder = "asc",
   }) async {
@@ -84,8 +85,7 @@ class ApiService {
   // Удаление продукта
   Future<void> deleteProduct(int id) async {
     try {
-      final response = await _dio.delete(
-          'http://192.168.1.43:8080/products/delete/$id');
+      final response = await _dio.delete('http://192.168.1.43:8080/products/delete/$id');
       if (response.statusCode != 204) {
         throw Exception('Failed to delete product with id: $id');
       }
@@ -93,6 +93,7 @@ class ApiService {
       throw Exception('Error deleting product: $e');
     }
   }
+
   // Обновление количества товара
   Future<Product> updateProductQuantity(int productId, int quantity) async {
     try {
@@ -115,7 +116,6 @@ class ApiService {
     try {
       final response = await _dio.post(
         'http://192.168.1.43:8080/products/favorite/$productId',
-        data: {'is_favourite': false},
       );
       if (response.statusCode == 200) {
         return Product.fromJson(response.data);
@@ -130,9 +130,8 @@ class ApiService {
   // Обновление флага InCart (добавление/удаление из корзины)
   Future<Product> toggleCart(int productId) async {
     try {
-      final response = await _dio.put(
+      final response = await _dio.post(
         'http://192.168.1.43:8080/products/cart/$productId',
-        data: {'in_cart': false}, // Убедитесь, что сервер ожидает это поле
       );
       if (response.statusCode == 200) {
         return Product.fromJson(response.data);
@@ -141,6 +140,43 @@ class ApiService {
       }
     } catch (e) {
       throw Exception('Error toggling cart: $e');
+    }
+  }
+
+  Future<void> createOrder(double totalPrice, List<Map<String, dynamic>> products) async {
+    try {
+      await _dio.post('http://192.168.1.43:8080/orders/create', data: {
+        'user_id': 1,
+        'total_price': totalPrice,
+        'products': products,
+      });
+    } catch (e) {
+      throw Exception('Error creating order: $e');
+    }
+  }
+
+  // Метод для получения заказов пользователя
+  Future<List<Order>> getOrders(int userId) async {
+    try {
+      final response = await _dio.get('http://192.168.1.43:8080/orders?user_id=$userId');
+      if (response.statusCode == 200) {
+        List<Order> orders = (response.data as List).map((order) => Order.fromJson(order)).toList();
+        return orders;
+      } else {
+        throw Exception('Failed to load orders');
+      }
+    } catch (e) {
+      throw Exception('Error fetching orders: $e');
+    }
+  }
+
+  Future<void> updateProductInCartStatus(int productId, bool inCart) async {
+    try {
+      await _dio.post('http://192.168.1.43:8080/products/cart/$productId', data: {
+        'in_cart': inCart,
+      });
+    } catch (e) {
+      throw Exception('Error updating product in cart status: $e');
     }
   }
 }

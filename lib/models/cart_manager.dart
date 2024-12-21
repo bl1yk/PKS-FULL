@@ -56,4 +56,33 @@ class CartManager with ChangeNotifier {
   bool isInCart(Product product) {
     return _cartProducts.contains(product);
   }
+  Future<void> checkout() async {
+    if (_cartProducts.isEmpty) {
+      throw Exception("Корзина пуста");
+    }
+
+    // Подсчитываем общую стоимость заказа
+    double totalPrice = _cartProducts.fold(
+        0, (sum, product) => sum + product.productPrice * product.quantity);
+
+    // Создаем список товаров в формате JSON
+    List<Map<String, dynamic>> products = _cartProducts.map((product) {
+      return {
+        'product_id': product.productId,
+        'quantity': product.quantity,
+        'price': product.productPrice,
+      };
+    }).toList();
+
+    // Отправляем заказ на сервер
+    await _apiService.createOrder(totalPrice, products);
+
+    for (var product in _cartProducts) {
+      await _apiService.updateProductInCartStatus(product.productId, false);
+    }
+
+    // Очищаем корзину
+    _cartProducts.clear();
+    notifyListeners();
+  }
 }

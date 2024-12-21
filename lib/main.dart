@@ -7,6 +7,9 @@ import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:full_proj_pks/api//supabase_service.dart';
 import 'package:full_proj_pks/pages/auth_page.dart';
+import 'package:full_proj_pks/pages/home_page.dart';
+import 'package:full_proj_pks/pages/order_page.dart';
+import 'package:full_proj_pks/pages/shopping_cart.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,6 +33,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      initialRoute: '/',
+      routes: {
+        '/cart': (context) => const ShoppingCart(), // Страница корзины
+        '/orders': (context) => OrdersPage(), // Страница заказов
+      },
       title: 'Flutter Demo',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),

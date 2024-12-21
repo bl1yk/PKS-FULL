@@ -12,7 +12,7 @@ class ProductManager with ChangeNotifier {
   Future<void> fetchProducts({
     String searchQuery = "",
     double minPrice = 0,
-    double maxPrice = 30000,
+    double maxPrice = 10000,
     String sortBy = "",
     String sortOrder = "asc",
   }) async {

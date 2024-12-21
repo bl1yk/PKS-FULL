@@ -156,7 +156,6 @@ class _HomePageState extends State<HomePage> {
                     child: Text(value == 'asc' ? 'По возрастанию' : 'По убыванию',
                       style: const TextStyle(color: Colors.white54),
                     ),
-
                   );
                 }).toList(),
               ),
