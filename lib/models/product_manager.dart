@@ -9,15 +9,26 @@ class ProductManager with ChangeNotifier {
   List<Product> get products => _products;
 
   // Метод для загрузки продуктов с сервера
-  Future<void> fetchProducts() async {
+  Future<void> fetchProducts({
+    String searchQuery = "",
+    double minPrice = 0,
+    double maxPrice = 30000,
+    String sortBy = "",
+    String sortOrder = "asc",
+  }) async {
     try {
-      _products = await _apiService.getProducts();
+      _products = await _apiService.getProducts(
+        searchQuery: searchQuery,
+        minPrice: minPrice,
+        maxPrice: maxPrice,
+        sortBy: sortBy,
+        sortOrder: sortOrder,
+      );
       notifyListeners();
     } catch (e) {
       print('Error fetching products: $e');
     }
   }
-
   // Метод для добавления продукта через API
   Future<void> addProduct(Product product) async {
     try {

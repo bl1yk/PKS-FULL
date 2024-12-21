@@ -5,9 +5,21 @@ class ApiService {
   final Dio _dio = Dio();
 
   // Получение списка продуктов
-  Future<List<Product>> getProducts() async {
+  Future<List<Product>> getProducts({
+    String searchQuery = "",
+    double minPrice = 0,
+    double maxPrice = 30000,
+    String sortBy = "",
+    String sortOrder = "asc",
+  }) async {
     try {
-      final response = await _dio.get('http://192.168.1.43:8080/products');
+      final response = await _dio.get('http://192.168.1.43:8080/products', queryParameters: {
+        'search': searchQuery,
+        'min_price': minPrice,
+        'max_price': maxPrice,
+        'sort_by': sortBy,
+        'sort_order': sortOrder,
+      });
       if (response.statusCode == 200) {
         List<Product> products = (response.data as List)
             .map((product) => Product.fromJson(product))
